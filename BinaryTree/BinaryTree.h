@@ -11,7 +11,7 @@ typedef struct _Node
 	int*   pData;
 } Node;
 
-
+ 
 class BinaryTree
 {
 private:
