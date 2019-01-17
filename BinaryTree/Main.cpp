@@ -3,6 +3,7 @@
 #include "BinaryTree.h"
 
 #include "TBinaryTree.h"
+using namespace BinaryTreeTemplate;
 
 int main()
 {
@@ -25,6 +26,12 @@ int main()
 	BTree.Put(2);
 	BTree.Put(1);
 	BTree.Put(3);
+	BTree.Put(4);
+	BTree.Put(1);
+
+	BTree.Search(2);
+	BTree.Search(5);
+	BTree.Search(1);
 
 	return 0;
 }
