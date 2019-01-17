@@ -15,7 +15,8 @@
 //		a non-recursive implementation
 //		iterators
 
-
+#include <assert.h>
+#include <iostream>
 
 namespace BinaryTreeTemplate
 {
@@ -62,7 +63,7 @@ namespace BinaryTreeTemplate
 	// stores the data element
 
 	template<typename O>
-	class TNode 
+	class TNode
 	{
 	private:
 	protected:
@@ -103,10 +104,11 @@ namespace BinaryTreeTemplate
 		TNode<O>*	m_pRoot;
 		F			CompFunc;
 
-		bool RecurseAdd(TNode<O>* pCurNode, TNode<O>* pNewNode);
-		bool RecurseRemove(TNode<O>* pCurNode, TNode<O>* pNewNode);
-		bool RecurseSearch(TNode<O>* pCurNode, TNode<O>* pNewNode);
-		
+		virtual inline bool RecurseAdd(TNode<O>* pCurNode, TNode<O>* pNewNode);
+		virtual inline bool RecurseRemove(TNode<O>* pCurNode, TNode<O>* pNewNode);
+		virtual inline bool RecurseSearch(TNode<O>* pCurNode, TNode<O>* pNewNode);
+		virtual inline bool RecursePrint(TNode<O>* pCurNode);
+
 	protected:
 	public:
 		TBinaryTree() :
@@ -120,11 +122,40 @@ namespace BinaryTreeTemplate
 
 		}
 
-		inline bool Put(const O& Object);
-		inline bool Remove(const O& Object);
-		inline bool Search(const O& Object);
+		virtual inline bool Put(const O& Object);
+		virtual inline bool Remove(const O& Object);
+		virtual inline bool Search(const O& Object);
+
+		virtual inline bool PrintTree();
 	};
-	
+
+	// RecursivePrint
+	// Recursive Implementation to output all tree elements
+	template<typename O, typename F = CompareFunc<O> >
+	bool TBinaryTree<O, F>::RecursePrint(TNode<O>* pCurNode)
+	{
+		if (pCurNode == nullptr)
+			return true; // empty tree
+
+		std::cout << "\n" << pCurNode->Data;
+		std::cout << "\n going Left";
+		RecursePrint(pCurNode->pLeft);
+		std::cout << "\n going right";
+		RecursePrint(pCurNode->pRight);
+
+		return true;
+	}
+
+	// PrintTree
+	// External Interface that outputs the tree elements
+	template<typename O, typename F = CompareFunc<O> >
+	bool TBinaryTree<O, F>::PrintTree()
+	{
+		if (m_pRoot == nullptr)
+			return true; // empty tree
+		
+		return RecursePrint(m_pRoot);
+	}
 
 	// RecurseAdd
 	// Recursive Add to the tree implementation
@@ -151,7 +182,7 @@ namespace BinaryTreeTemplate
 			}
 		}
 		else {
-			// something happened, should always be a 1 or 0 returned
+			// something happened, should always be a 0,1 or 2 returned
 		}
 		return true;
 	}
@@ -255,6 +286,7 @@ namespace BinaryTreeTemplate
 			}
 		}
 
+		assert(0 && "Should never get here");
 		return false; // to get around compiler warning
 	}
 
