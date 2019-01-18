@@ -18,12 +18,12 @@ private:
 	Node*	m_pRootNode;
 
 protected:
-	Node* CreateNode();
+	Node* CreateNode() noexcept;
 	bool InsertNode(Node* pCurNode, Node* pNewNode);
 	bool Traverse(Node* _pNode, int _iValue);
 
 public:
-	BinaryTree();
+	BinaryTree() noexcept;
 	~BinaryTree();
 
 	bool AddValue(int* _pValue);

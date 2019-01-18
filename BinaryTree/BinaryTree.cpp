@@ -2,8 +2,9 @@
 //
 #include "stdafx.h"
 #include <memory>
+#include <cassert>
 
-BinaryTree::BinaryTree() :
+BinaryTree::BinaryTree() noexcept:
 	m_pRootNode(nullptr)
 {
 
@@ -14,7 +15,7 @@ BinaryTree::~BinaryTree()
 
 }
 
-Node* BinaryTree::CreateNode()
+Node* BinaryTree::CreateNode() noexcept
 {
 	Node* pNode = nullptr;
 
@@ -56,12 +57,13 @@ bool BinaryTree::AddValue(int* _pValue)
 	pNode->pLeftChild = nullptr;
 	pNode->pRightChild = nullptr;
 
-	bool bInsertSuccess = InsertNode(m_pRootNode, pNode);
+	const bool bInsertSuccess = InsertNode(m_pRootNode, pNode);
 	return (bInsertSuccess);
 }
 
 bool BinaryTree::InsertNode(Node* _pCurNode, Node* _pNewNode)
 {
+	assert(_pCurNode);
 	if (*_pCurNode->pData <= *_pNewNode->pData) {
 		// right branch, value is greater than
 		if (_pCurNode->pRightChild != nullptr) {
@@ -92,6 +94,8 @@ bool BinaryTree::InsertNode(Node* _pCurNode, Node* _pNewNode)
 
 bool BinaryTree::Traverse(Node* _pNode, int _iValue)
 {
+	assert(_pNode);
+
 	if (*_pNode->pData == _iValue)
 		return true;
 

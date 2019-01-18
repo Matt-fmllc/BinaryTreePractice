@@ -41,7 +41,7 @@ namespace BinaryTreeTemplate
 
 	template<typename O>
 	struct CompareFunction {
-		virtual unsigned long operator()(TNode<O>* Obj1, TNode<O>* Obj2) const
+		virtual unsigned long operator()(TNode<O>* Obj1, TNode<O>* Obj2) const noexcept
 		{
 			// 1 is greater than 2
 			if (Obj1->Data > Obj2->Data) {
@@ -76,7 +76,7 @@ namespace BinaryTreeTemplate
 		// can add a pointer to the parent for convienience
 		//CNode* pParent;
 
-		TNode(const O& Obj) :
+		TNode(const O& Obj) noexcept :
 			Data(Obj), pLeft(nullptr), pRight(nullptr)
 		{
 
@@ -121,7 +121,7 @@ namespace BinaryTreeTemplate
 		virtual inline bool RecursePrint(TNode<O>* pCurNode);
 
 	public:
-		TBinaryTree() :
+		TBinaryTree() noexcept :
 			m_pRoot(nullptr)
 		{
 
@@ -218,7 +218,7 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::RecurseAdd(TNode<O>* pCurNode, TNode<O>* pNewNode)
 	{
-		unsigned long iVal = CompFunc(pCurNode, pNewNode);
+		const unsigned long iVal = CompFunc(pCurNode, pNewNode);
 		if (iVal == 0 || iVal == 2) {
 			// right branch
 			if (pCurNode->pRight != nullptr) {
@@ -287,7 +287,7 @@ namespace BinaryTreeTemplate
 	bool TBinaryTree<O, F>::RecurseRemove(TNode<O>* pCurNode, TNode<O>* pSearchNode, TNode<O>* pParent)
 	{
 		// check the root
-		int iVal = CompFunc(pCurNode, pSearchNode);
+		const int iVal = CompFunc(pCurNode, pSearchNode);
 		if (iVal == 2) {
 			// node found
 			TNode<O>* pLeft = pCurNode->pLeft;
@@ -352,7 +352,7 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::RecurseSearch(TNode<O>* pCurNode, TNode<O>* pSearchNode)
 	{
-		unsigned long iVal = CompFunc(pCurNode, pSearchNode);
+		const unsigned long iVal = CompFunc(pCurNode, pSearchNode);
 		if (iVal == 2) {
 			// node found
 			return true;
@@ -388,6 +388,7 @@ namespace BinaryTreeTemplate
 		bool bSuccess = false;
 
 		TNode<O>* pSearchNode = new TNode<O>(Object);
+		assert(pSearchNode);
 
 		// check for empty list
 		if (m_pRoot == nullptr) {

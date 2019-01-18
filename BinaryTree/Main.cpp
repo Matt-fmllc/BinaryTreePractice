@@ -10,7 +10,7 @@ void StandardBinaryTreePractice()
 {
 	BinaryTree* pBinaryTree = nullptr;
 	int Values[] = { 3,5,7,0 };
-	int Count = sizeof(Values) / sizeof(int);
+	const int Count = sizeof(Values) / sizeof(int);
 
 	pBinaryTree = new BinaryTree();
 	for (int x = 0; x < Count; x++) {
