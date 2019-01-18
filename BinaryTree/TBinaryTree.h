@@ -105,6 +105,7 @@ namespace BinaryTreeTemplate
 		F			CompFunc;
 
 		virtual inline bool AddTreeBranch(TNode<O>* pRoot);
+		virtual inline bool DeleteTree(TNode<O>* pRoot);
 
 	protected:
 		virtual inline bool RecurseAdd(TNode<O>* pCurNode, TNode<O>* pNewNode);
@@ -121,15 +122,39 @@ namespace BinaryTreeTemplate
 
 		virtual ~TBinaryTree()
 		{
-
+			DeleteTree(m_pRoot);
 		}
 
 		virtual inline bool Put(const O& Object);
 		virtual inline bool Remove(const O& Object);
 		virtual inline bool Search(const O& Object);
 
+		virtual inline bool ClearTree();
 		virtual inline bool PrintTree();
 	};
+
+	// DeleteTree
+	// Deletes all nodes from the tree
+	template<typename O, typename F = CompareFunc<O> >
+	bool TBinaryTree<O, F>::DeleteTree(TNode<O>* pNode)
+	{
+		if (pNode == nullptr)
+			return true;
+
+		TNode<O>* pLeft = pNode->pLeft;
+		TNode<O>* pRight = pNode->pRight;
+		delete pNode;
+		DeleteTree(pLeft);
+		DeleteTree(pRight);
+
+		return true;
+	}
+
+	template<typename O, typename F = CompareFunc<O> >
+	bool TBinaryTree<O, F>::ClearTree()
+	{
+		return DeleteTree(m_pRoot);
+	}
 
 	// RecursivePrint
 	// Recursive Implementation to output all tree elements
