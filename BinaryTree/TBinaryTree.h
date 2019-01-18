@@ -150,6 +150,8 @@ namespace BinaryTreeTemplate
 		return true;
 	}
 
+	// ClearTree
+	// External interface to remove all elements in the tree
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::ClearTree()
 	{
