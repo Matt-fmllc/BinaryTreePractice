@@ -104,12 +104,14 @@ namespace BinaryTreeTemplate
 		TNode<O>*	m_pRoot;
 		F			CompFunc;
 
+		virtual inline bool AddTreeBranch(TNode<O>* pRoot);
+
+	protected:
 		virtual inline bool RecurseAdd(TNode<O>* pCurNode, TNode<O>* pNewNode);
-		virtual inline bool RecurseRemove(TNode<O>* pCurNode, TNode<O>* pNewNode);
+		virtual inline bool RecurseRemove(TNode<O>* pCurNode, TNode<O>* pNewNode, TNode<O>* pParent);
 		virtual inline bool RecurseSearch(TNode<O>* pCurNode, TNode<O>* pNewNode);
 		virtual inline bool RecursePrint(TNode<O>* pCurNode);
 
-	protected:
 	public:
 		TBinaryTree() :
 			m_pRoot(nullptr)
@@ -138,9 +140,9 @@ namespace BinaryTreeTemplate
 			return true; // empty tree
 
 		std::cout << "\n" << pCurNode->Data;
-		std::cout << "\n going Left";
+		//std::cout << "\n going Left";
 		RecursePrint(pCurNode->pLeft);
-		std::cout << "\n going right";
+		//std::cout << "\n going right";
 		RecursePrint(pCurNode->pRight);
 
 		return true;
@@ -202,35 +204,64 @@ namespace BinaryTreeTemplate
 		return RecurseAdd(m_pRoot, pNode);
 	}
 
+	// Adds a "branch" of nodes 
+	template<typename O, typename F = CompareFunc<O> >
+	bool TBinaryTree<O, F>::AddTreeBranch(TNode<O>* pRoot)
+	{
+		if (pRoot == nullptr) {
+			return false;
+		}
+		TNode<O>* pLeft = pRoot->pLeft;
+		TNode<O>* pRight = pRoot->pRight;
+
+		pRoot->pLeft = nullptr;
+		pRoot->pRight = nullptr;
+		RecurseAdd(m_pRoot, pRoot);
+		if ( pLeft != nullptr )
+			AddTreeBranch(pLeft);
+		if ( pRight != nullptr )
+			AddTreeBranch(pRight);
+		return true;
+	}
+
 	// RecurseRemove
 	// Recursive Removal to the tree implementation
 	template<typename O, typename F = CompareFunc<O> >
-	bool TBinaryTree<O, F>::RecurseRemove(TNode<O>* pCurNode, TNode<O>* pSearchNode)
+	bool TBinaryTree<O, F>::RecurseRemove(TNode<O>* pCurNode, TNode<O>* pSearchNode, TNode<O>* pParent)
 	{
-		unsigned long iVal = CompFunc(pCurNode, pSearchNode);
+		// check the root
+		int iVal = CompFunc(pCurNode, pSearchNode);
 		if (iVal == 2) {
 			// node found
-			printf("\nFound Node");
+			TNode<O>* pLeft = pCurNode->pLeft;
+			TNode<O>* pRight = pCurNode->pRight;
+
+			if (pParent->pLeft == pCurNode) {
+				pParent->pLeft = nullptr;
+			}
+			else if (pParent->pRight == pCurNode) {
+				pParent->pRight = nullptr;
+			}
+			else {
+				assert(0 && "Should not be here");
+			}
+			delete pCurNode;
+			if ( pLeft != nullptr)
+				AddTreeBranch(pLeft);
+			if ( pRight != nullptr)
+				AddTreeBranch(pRight);
+			return true;
+		}
+		else if ( iVal == 1 ) {
+			// left branch
+			return RecurseRemove(pCurNode->pLeft, pSearchNode, pCurNode);
 		}
 		else if (iVal == 0) {
 			// right branch
-			if (pCurNode->pRight == nullptr) {
-				return false;
-			}
-			else {
-				RecurseRemove(pCurNode->pRight, pSearchNode);
-			}
+			return RecurseRemove(pCurNode->pRight, pSearchNode, pCurNode);
 		}
-		else if (iVal == 1) {
-			// left branch
-			if (pCurNode->pLeft == nullptr) {
-				return false;
-			}
-			else {
-				RecurseRemove(pCurNode->pLeft, pSearchNode);
-			}
-		}
-		return true;
+
+		return false; // to get around compiler warning
 	}
 
 	// Remove
@@ -247,7 +278,19 @@ namespace BinaryTreeTemplate
 			bSuccess = false;
 		}
 		else {
-			bSuccess = RecurseRemove(m_pRoot, pSearchNode);
+			// check the root
+			int iVal = CompFunc(m_pRoot, pSearchNode);
+			if (iVal == 2) {
+				// node found
+				TNode<O>* pLeft = m_pRoot->pLeft;
+				TNode<O>* pRight = m_pRoot->pRight;
+				delete m_pRoot;
+				AddTreeBranch(pLeft);
+				AddTreeBranch(pRight);
+			}
+			else {
+				bSuccess = RecurseRemove(m_pRoot, pSearchNode, pSearchNode);
+			}
 		}
 
 		// delete the node that was created for the search
