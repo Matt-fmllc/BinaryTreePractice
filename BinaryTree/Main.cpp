@@ -46,6 +46,13 @@ void TemplateBinaryTreePractice()
 	printf("\n");
 	BTree.Put(2);
 	BTree.PrintTree();
+	printf("\n");
+	BTree.Remove(0);
+	BTree.PrintTree();
+	printf("\n");
+	BTree.Put(0);
+	BTree.PrintTree();
+	printf("\n");
 
 
 	printf("\n Float Implementation");
