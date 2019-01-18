@@ -17,6 +17,8 @@
 
 #include <assert.h>
 #include <iostream>
+#include <memory>
+#include <mutex>
 
 namespace BinaryTreeTemplate
 {
@@ -106,6 +108,8 @@ namespace BinaryTreeTemplate
 		TNode<O>*	m_pRoot;
 		F			CompFunc;
 
+		std::mutex	m_Mutex;
+
 		virtual inline bool AddNode(TNode<O>* pRoot);
 		virtual inline bool AddTreeBranch(TNode<O>* pRoot);
 		virtual inline bool DeleteTree(TNode<O>* pRoot);
@@ -141,6 +145,8 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::AddNode(TNode<O>* pNode)
 	{
+		std::lock_guard<std::mutex> lock(m_Mutex);
+
 		if (!m_pRoot) {
 			m_pRoot = pNode;
 			return true;
@@ -154,6 +160,7 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::DeleteTree(TNode<O>* pNode)
 	{
+
 		if (pNode == nullptr)
 			return true;
 
@@ -171,6 +178,8 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::ClearTree()
 	{
+		std::lock_guard<std::mutex> lock(m_Mutex);
+
 		return DeleteTree(m_pRoot);
 	}
 
@@ -196,6 +205,8 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::PrintTree()
 	{
+		std::lock_guard<std::mutex> lock(m_Mutex);
+
 		if (m_pRoot == nullptr)
 			return true; // empty tree
 		
@@ -237,6 +248,8 @@ namespace BinaryTreeTemplate
 	template<typename O, typename F = CompareFunc<O> >
 	bool TBinaryTree<O, F>::Put(const O& Object)
 	{
+		std::lock_guard<std::mutex> lock(m_Mutex);
+
 		TNode<O>* pNode = new TNode<O>(Object);
 
 		if (!m_pRoot) {
@@ -314,6 +327,8 @@ namespace BinaryTreeTemplate
 	bool TBinaryTree<O, F>::Remove(const O& Object)
 	{
 		bool bSuccess = false;
+
+		std::lock_guard<std::mutex> lock(m_Mutex);
 
 		TNode<O>* pSearchNode = new TNode<O>(Object);
 		
