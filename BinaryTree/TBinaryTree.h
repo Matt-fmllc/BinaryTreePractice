@@ -85,6 +85,8 @@ namespace BinaryTreeTemplate
 
 	// Template Binary Tree
 	// O(n) = O(log n) on average, O(n) in worst case
+	// Note* - why difference between ave and worst case?
+	// Answer* - a lopsided tree, imagine a tree with only left branches 
 	// 
 	// Generic Binary Tree Implementation
 	// Basic Methods
