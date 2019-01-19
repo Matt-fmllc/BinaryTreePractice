@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include <thread>
 #include "..\\BinaryTree\TBinaryTree.h"
 using namespace BinaryTreeTemplate;
 
@@ -8,7 +9,38 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace BinaryTreeUnitTests
 {		
-	const int iTestRuns = 2500;
+	const int iTestRuns = 1000;
+
+	void HitTree(TBinaryTree<int, CompareFunction<int>>* BTree)
+	{
+
+		// add a bunch of nodes to the tree
+		int iTestVals[iTestRuns] = { 0 };
+		std::srand(7654321);
+		for (int x = 0; x < iTestRuns; x++) {
+			iTestVals[x] = std::rand();
+			BTree->Put(iTestVals[x]);
+		}
+
+		// check if all those nodes got added
+		bool bRetVal = false;
+		for (int x = 0; x < iTestRuns; x++) {
+			bRetVal = BTree->Search(iTestVals[x]);
+			Assert::IsTrue(bRetVal);
+		}
+
+		// now remove half the nodes
+		for (int x = 0; x < (iTestRuns / 2); x++) {
+			BTree->Remove(iTestVals[x]);
+		}
+
+		// now test to see if the remainder of the nodes 
+		// are still in the tree
+		for (int x = (iTestRuns / 2); x < iTestRuns; x++) {
+			bRetVal = BTree->Search(iTestVals[x]);
+			Assert::IsTrue(bRetVal);
+		}
+	}
 
 
 	TEST_CLASS(BinaryTreeTemplate_UnitTests)
@@ -136,6 +168,21 @@ namespace BinaryTreeUnitTests
 				bRetVal = BTree.Search(iTestVals[x] * -1);
 				Assert::IsFalse(bRetVal);
 			}
+		}
+
+
+
+		TEST_METHOD(PutSearchRemoveMultiThreadedTests)
+		{
+			TBinaryTree<int, CompareFunction<int>> BTree;
+
+			std::thread T1(HitTree,&BTree);
+			std::thread T2(HitTree,&BTree);
+			std::thread T3(HitTree,&BTree);
+
+			T1.join();
+			T2.join();
+			T3.join();
 		}
 	};
 }
